@@ -10,7 +10,6 @@ import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSpan;
 
 import io.FileHandler;
 import model.Event;
@@ -45,9 +44,16 @@ public class Application {
 				storeTourneys.stream().filter(node -> node.asText().contains(PPTQ_TEXT)).forEach(node -> {
 					System.out.println(node.asText());
 					Event event = new Event();
-					event.setName(
-							((HtmlSpan) node.getByXPath("//*[@class='event-title-name']").get(0)).getTextContent());
-					System.out.println("Name: " + event.getName());
+					String date = node.getFirstChild().getFirstChild().getTextContent();
+					String name = node.getChildNodes().get(1).getFirstChild().getTextContent();
+					String address = node.getChildNodes().get(2).getFirstChild().getTextContent();
+					String format = node.getChildNodes().get(3).getTextContent();
+
+					// event.setName(
+					// ((HtmlSpan9 )
+					// node.getByXPath("//*[@class='event-title-name']").get(0)).getTextContent());
+					System.out.println(date + " " + name + " " + address + " " + format);
+					;
 				});
 
 				// Create that many Events
