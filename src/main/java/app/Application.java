@@ -2,6 +2,7 @@ package app;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
@@ -44,15 +45,23 @@ public class Application {
 				storeTourneys.stream().filter(node -> node.asText().contains(PPTQ_TEXT)).forEach(node -> {
 					System.out.println(node.asText());
 					Event event = new Event();
-					String date = node.getFirstChild().getFirstChild().getTextContent();
-					String name = node.getChildNodes().get(1).getFirstChild().getTextContent();
-					String address = node.getChildNodes().get(2).getFirstChild().getTextContent();
-					String format = node.getChildNodes().get(3).getTextContent();
+					String date = node.getChildNodes().get(1).getChildNodes().get(1).getTextContent();
+					event.setDate(date);
+					System.out.println(" Date : " + date );
+					String name = node.getChildNodes().get(3).getFirstChild().getTextContent();
+					System.out.println(" Name : " + name );
+					event.setName(name);
+					String organiser = node.getChildNodes().get(5).getFirstChild().getTextContent();
+					System.out.println(" Address : " + organiser );
+					event.setOrganizer(organiser);
+					String format = node.getChildNodes().get(7).getTextContent();
+					System.out.println(" Format : " + format );
+					event.setFormat(format);
 
 					// event.setName(
 					// ((HtmlSpan9 )
 					// node.getByXPath("//*[@class='event-title-name']").get(0)).getTextContent());
-					System.out.println(date + " " + name + " " + address + " " + format);
+					//System.out.println(date + " " + name + " " + address + " " + format);
 					;
 				});
 

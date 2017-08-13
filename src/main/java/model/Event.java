@@ -8,7 +8,7 @@ public class Event {
 	private String organizer;
 	private String format;
 	private String link;
-	private Date date;
+	private String date;
 
 	public Event() {
 	}
@@ -45,11 +45,11 @@ public class Event {
 		this.link = link;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 }
