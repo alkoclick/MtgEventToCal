@@ -1,7 +1,5 @@
 package model;
 
-import java.util.Date;
-
 public class Event {
 
 	private String name;
@@ -52,7 +50,7 @@ public class Event {
 	public void setDate(String date) {
 		this.date = date;
 	}
-	
+
 	public String toString() {
 		return ("Name : " + name + " Date : " + date + " Organizer : " + organizer + " Format : " + format);
 	}
