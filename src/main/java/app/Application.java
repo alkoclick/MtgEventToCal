@@ -41,22 +41,26 @@ public class Application {
 				DomNodeList<DomNode> storeTourneys = storeHomepage.getElementById("event-table-content")
 						.getChildNodes();
 				storeTourneys.forEach(node -> node.asText());
+				
+				// Create that many Events
+				// Fill events with info from each HTMLElement
 
 				storeTourneys.stream().filter(node -> node.asText().contains(PPTQ_TEXT)).forEach(node -> {
-					System.out.println(node.asText());
+					//System.out.println(node.asText());
 					Event event = new Event();
 					String date = node.getChildNodes().get(1).getChildNodes().get(1).getTextContent();
 					event.setDate(date);
-					System.out.println(" Date : " + date );
+					//System.out.println(" Date : " + date );
 					String name = node.getChildNodes().get(3).getFirstChild().getTextContent();
-					System.out.println(" Name : " + name );
+					//System.out.println(" Name : " + name );
 					event.setName(name);
 					String organiser = node.getChildNodes().get(5).getFirstChild().getTextContent();
-					System.out.println(" Address : " + organiser );
+					//System.out.println(" Address : " + organiser );
 					event.setOrganizer(organiser);
 					String format = node.getChildNodes().get(7).getTextContent();
-					System.out.println(" Format : " + format );
+					//System.out.println(" Format : " + format );
 					event.setFormat(format);
+					System.out.println(event.toString());
 
 					// event.setName(
 					// ((HtmlSpan9 )
@@ -77,7 +81,6 @@ public class Application {
 				// }
 			} catch (Exception e) {
 				e.printStackTrace();
-				// TODO: handle exception
 			}
 
 			// Wait for result

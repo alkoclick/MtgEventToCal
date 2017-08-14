@@ -1,2 +1,5 @@
 #Thessaloniki
 http://locator.wizards.com/#brand=magic&a=location&p=Thessaloniki,+Greece&c=40.6400629,22.944419100000005&et=PPTQ&massmarket=no&loc=357533&orgid=12185&addrid=357533
+http://locator.wizards.com/#brand=magic&a=location&p=thessaloniki&massmarket=no&loc=350395&orgid=12167&addrid=350395
+http://locator.wizards.com/#brand=magic&a=location&p=thessaloniki&massmarket=no&loc=339642&orgid=12167&addrid=339642
+http://locator.wizards.com/#brand=magic&a=location&p=thessaloniki&massmarket=no&loc=354827&orgid=24099&addrid=354827
