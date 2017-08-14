@@ -1,12 +1,16 @@
 package app;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import io.FileHandler;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 import util.MainMemory;
 import workers.PPTQFinder;
 
@@ -14,13 +18,20 @@ public class Application {
 	static String MAIN_URL = Messages.getString("EventLocator.Main");
 
 	public static void main(String[] args) {
+		try {
+			Document doc = Jsoup.connect(args[0]).get();
+			MainMemory.storeLinks.putAll(doc.getElementsByClass("entry-content").get(0).getElementsByTag("p").stream()
+					.filter(el -> el.text().contains("http:"))
+					.collect(Collectors.toConcurrentMap(Element::hashCode, Element::text)));
 
-		// Read store links
-		Collection<String> storeLinks = FileHandler.reader("storeLinks.txt");
+			runOnExecutor(MainMemory.storeLinks.values().stream().map(link -> new PPTQFinder(link))
+					.collect(Collectors.toSet()), 8, 5);
 
-		runOnExecutor(storeLinks.stream().map(link -> new PPTQFinder(link)).collect(Collectors.toSet()), 8, 5);
-
-		MainMemory.allEvents.values().forEach(System.out::println);
+			MainMemory.allEvents.values().forEach(System.out::println);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// Google calendar upload
 	}

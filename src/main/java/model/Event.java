@@ -1,9 +1,11 @@
 package model;
 
+import java.util.List;
+
 public class Event {
 
 	private String name;
-	private String organizer;
+	private List<String> organizer;
 	private String format;
 	private String link;
 	private String date;
@@ -19,11 +21,11 @@ public class Event {
 		this.name = name;
 	}
 
-	public String getOrganizer() {
+	public List<String> getOrganizer() {
 		return organizer;
 	}
 
-	public void setOrganizer(String organizer) {
+	public void setOrganizer(List<String> organizer) {
 		this.organizer = organizer;
 	}
 

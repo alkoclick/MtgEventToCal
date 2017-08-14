@@ -1,5 +1,7 @@
 package workers;
 
+import java.util.stream.Collectors;
+
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -23,21 +25,16 @@ public class PPTQFinder implements Runnable {
 	public void run() {
 		// Visit each one
 		// Wait for page to load
+		System.out.println(url);
 		HtmlPage storeHomepage = waitForPageToLoad(url);
 
 		try {
-
-			// Find out how many results we have
-			System.out.println("Other results: " + storeHomepage.getElementsByTagName("dl").size());
-
 			DomNodeList<DomNode> storeTourneys = storeHomepage.getElementById("event-table-content").getChildNodes();
 			storeTourneys.forEach(node -> node.asText());
 
 			// Keep only PPTQs
 			storeTourneys.stream().filter(node -> node.asText().contains(PPTQ_TEXT)).forEach(node -> {
-
 				Event event = parseEvent(node);
-
 				MainMemory.allEvents.put(event.hashCode(), event);
 			});
 		} catch (Exception e) {
@@ -45,6 +42,13 @@ public class PPTQFinder implements Runnable {
 		}
 	}
 
+	/**
+	 * Gets an HTML DomNode item, and parses its contents to return an event
+	 * 
+	 * @param node
+	 *            The node to parse
+	 * @return Event with all the information we were able to extract
+	 */
 	private Event parseEvent(DomNode node) {
 		Event event = new Event();
 
@@ -52,7 +56,9 @@ public class PPTQFinder implements Runnable {
 
 		event.setName(node.getChildNodes().get(3).getFirstChild().getTextContent());
 
-		event.setOrganizer(node.getChildNodes().get(5).getFirstChild().getTextContent());
+		event.setOrganizer(
+				node.getChildNodes().get(5).getChildNodes().stream().map(childNode -> childNode.getTextContent())
+						.filter(line -> !line.isEmpty()).collect(Collectors.toList()));
 
 		event.setFormat(node.getChildNodes().get(7).getTextContent());
 
