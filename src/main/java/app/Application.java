@@ -1,19 +1,16 @@
 package app;
 
 import java.util.Collection;
-
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomNode;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import io.FileHandler;
-import model.Event;
+import util.MainMemory;
+import workers.PPTQFinder;
 
 public class Application {
-	private static final String PPTQ_TEXT = Messages.getString("HTML.PPTQ");
 	static String MAIN_URL = Messages.getString("EventLocator.Main");
 
 	public static void main(String[] args) {
@@ -21,67 +18,23 @@ public class Application {
 		// Read store links
 		Collection<String> storeLinks = FileHandler.reader("storeLinks.txt");
 
-		for (String storeUrl : storeLinks) {
+		runOnExecutor(storeLinks.stream().map(link -> new PPTQFinder(link)).collect(Collectors.toSet()), 8, 5);
 
-			// Visit each one
-			// Wait for page to load
-			HtmlPage storeHomepage = waitForPageToLoad(storeUrl);
+		MainMemory.allEvents.values().forEach(System.out::println);
 
-			try {
-
-				// Find out how many results we have
-				System.out.println("Other results: " + storeHomepage.getElementsByTagName("dl").size());
-
-				DomNodeList<DomNode> storeTourneys = storeHomepage.getElementById("event-table-content")
-						.getChildNodes();
-				storeTourneys.forEach(node -> node.asText());
-
-				// Keep only PPTQs
-				storeTourneys.stream().filter(node -> node.asText().contains(PPTQ_TEXT)).forEach(node -> {
-
-					Event event = new Event();
-					event.setDate(node.getChildNodes().get(1).getChildNodes().get(1).getTextContent());
-
-					event.setName(node.getChildNodes().get(3).getFirstChild().getTextContent());
-
-					event.setOrganizer(node.getChildNodes().get(5).getFirstChild().getTextContent());
-
-					event.setFormat(node.getChildNodes().get(7).getTextContent());
-
-					System.out.println(event);
-				});
-
-				// Create that many Events
-				// Fill events with info from each HTMLElement
-
-				// for (int i = 0; i < results; i++) {
-				// Event event = new Event();
-				// event.setName(((HtmlSpan)
-				// storeHomepage.getByXPath("//*[@class='event-title-name']").get(i))
-				// .getTextContent());
-				// System.out.println("Name: " + event.getName());
-				// }
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			// Wait for result
-			// Get the info from the element
-
-		}
-
-		// Google calendar
+		// Google calendar upload
 	}
 
-	private static HtmlPage waitForPageToLoad(String page_url) {
-		HtmlPage page = null;
-		try (final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45)) {
-			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
-			page = webClient.getPage(page_url);
-			webClient.waitForBackgroundJavaScript(120000);
-		} catch (Exception e) {
+	protected static void runOnExecutor(Collection<Runnable> runnables, int maxThreads, long timeout) {
+		// Over 4 threads hit connection reset from server
+		ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
+		runnables.forEach(runnable -> executor.execute(runnable));
+
+		executor.shutdown();
+		try {
+			executor.awaitTermination(timeout, TimeUnit.MINUTES);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		return page;
 	}
 }
