@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class CalendarApi {
     /** Application name. */
@@ -107,6 +108,16 @@ public class CalendarApi {
 
         // List the next 10 events from the primary calendar.
         DateTime now = new DateTime(System.currentTimeMillis());
+        
+        //command to create a calendar
+        Scanner scanner = new Scanner(System.in);
+        String NewCalendarName ;
+        System.out.println("What is the name of the calendar you want to create?");
+        NewCalendarName = scanner.nextLine();  
+        Event MyNewEvent = null; 
+        MyNewEvent = service.events().insert(NewCalendarName, MyNewEvent).execute();
+        
+        
         Events events = service.events().list("primary")
             .setMaxResults(10)
             .setTimeMin(now)
