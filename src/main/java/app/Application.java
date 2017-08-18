@@ -11,6 +11,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import com.google.api.services.calendar.Calendar;
+
 import util.MainMemory;
 import workers.PPTQFinder;
 
@@ -27,8 +29,21 @@ public class Application {
 			runOnExecutor(MainMemory.storeLinks.values().stream().map(link -> new PPTQFinder(link))
 					.collect(Collectors.toSet()), 8, 5);
 
-			MainMemory.allEvents.values().forEach(System.out::println);
-		} catch (IOException e) {
+			Calendar service = CalendarApi.getCalendarService();
+
+			MainMemory.allEvents.values().forEach(event -> {
+				try {
+					service.events()
+							.insert("khva8hs40c91hb4dkj1nok98is@group.calendar.google.com", event.toGoogleEvent())
+							.execute();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
+
+		} catch (
+
+		IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

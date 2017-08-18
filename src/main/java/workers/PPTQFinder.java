@@ -1,5 +1,8 @@
 package workers;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -10,11 +13,12 @@ import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import app.Messages;
-import model.Event;
+import model.MTGEvent;
 import util.MainMemory;
 
 public class PPTQFinder implements Runnable {
 	private static final String PPTQ_TEXT = Messages.getString("HTML.PPTQ");
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 	private String url;
 
 	public PPTQFinder(String url) {
@@ -34,7 +38,7 @@ public class PPTQFinder implements Runnable {
 
 			// Keep only PPTQs
 			storeTourneys.stream().filter(node -> node.asText().contains(PPTQ_TEXT)).forEach(node -> {
-				Event event = parseEvent(node);
+				MTGEvent event = parseEvent(node);
 				MainMemory.allEvents.put(event.hashCode(), event);
 			});
 		} catch (Exception e) {
@@ -49,10 +53,14 @@ public class PPTQFinder implements Runnable {
 	 *            The node to parse
 	 * @return Event with all the information we were able to extract
 	 */
-	private Event parseEvent(DomNode node) {
-		Event event = new Event();
+	private MTGEvent parseEvent(DomNode node) {
+		MTGEvent event = new MTGEvent();
 
-		event.setDate(node.getChildNodes().get(1).getChildNodes().get(1).getTextContent());
+		try {
+			event.setDate(DATE_FORMAT.parse(node.getChildNodes().get(1).getChildNodes().get(1).getTextContent()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 
 		event.setName(node.getChildNodes().get(3).getFirstChild().getTextContent());
 
