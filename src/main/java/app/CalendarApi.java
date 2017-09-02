@@ -3,9 +3,7 @@ package app;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -17,11 +15,8 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.CalendarScopes;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventDateTime;
 
 public class CalendarApi {
 	/** Application name. */
@@ -87,31 +82,6 @@ public class CalendarApi {
 		Credential credential = authorize();
 		return new com.google.api.services.calendar.Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
 				.setApplicationName(APPLICATION_NAME).build();
-	}
-
-	public static void main(String[] args) throws IOException {
-		// Build a new authorized API client service.
-		// Note: Do not confuse this class with the
-		// com.google.api.services.calendar.model.Calendar class.
-		com.google.api.services.calendar.Calendar service = getCalendarService();
-
-		// List the next 10 events from the primary calendar.
-		DateTime now = new DateTime(System.currentTimeMillis());
-
-		// command to create a calendar
-		System.out.println("What is the name of the calendar you want to create?");
-		service.calendarList().list().execute().getItems().forEach(System.out::println);
-
-		// service.calendars().insert(new
-		// Calendar().setSummary("Testerino")).execute();
-
-		service.events()
-				.insert("khva8hs40c91hb4dkj1nok98is@group.calendar.google.com",
-						new Event().setSummary("PPTQ Kaissa")
-								.setStart(new EventDateTime().setDateTime(new DateTime(new Date().from(Instant.now()))))
-								.setEnd(new EventDateTime()
-										.setDateTime(new DateTime(new Date().from(Instant.now().plusSeconds(3600))))))
-				.execute();
 	}
 
 }

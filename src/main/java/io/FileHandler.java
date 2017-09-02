@@ -12,8 +12,6 @@ import java.util.logging.Logger;
 
 import org.apache.xml.serializer.utils.Utils;
 
-import app.Messages;
-
 public class FileHandler {
 	private static final Logger logger = Logger.getLogger(Utils.class.getName());
 	private static final String COMMENT_CHAR = Messages.getString("File.CommentChar");

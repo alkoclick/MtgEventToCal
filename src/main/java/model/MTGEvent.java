@@ -23,16 +23,16 @@ public class MTGEvent {
 
 	public Event toGoogleEvent() {
 		Event event = new Event();
-		event.setSummary(name + " " + organizer);
-		event.setDescription("Format: " + format + System.lineSeparator() + link + System.lineSeparator()
-				+ organizer.stream().collect(Collectors.joining(System.lineSeparator())));
+		event.setSummary(name + " - " + format);
+		event.setDescription("Format: " + format);
 		event.setStart(new EventDateTime().setDateTime(new DateTime(date)));
-		// event.setLocation();
+
+		event.setLocation(organizer.stream().collect(Collectors.joining(",")));
+		// End time
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		calendar.add(Calendar.HOUR_OF_DAY, 7);
+		calendar.add(Calendar.HOUR_OF_DAY, 8);
 		event.setEnd(new EventDateTime().setDateTime(new DateTime(calendar.getTime())));
-
 		return event;
 	}
 

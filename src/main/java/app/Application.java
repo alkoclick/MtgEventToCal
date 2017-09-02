@@ -1,65 +1,26 @@
 package app;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 import com.google.api.services.calendar.Calendar;
 
-import util.MainMemory;
-import workers.PPTQFinder;
+import io.Messages;
 
 public class Application {
 	static String MAIN_URL = Messages.getString("EventLocator.Main");
 
 	public static void main(String[] args) {
 		try {
-			Document doc = Jsoup.connect(args[0]).get();
-			MainMemory.storeLinks.putAll(doc.getElementsByClass("entry-content").get(0).getElementsByTag("p").stream()
-					.filter(el -> el.text().contains("http:"))
-					.collect(Collectors.toConcurrentMap(Element::hashCode, Element::text)));
+			// Fetch store links from Greek Judges
+			WebscrapingUtils.fetchStoreLinks(args);
 
-			runOnExecutor(MainMemory.storeLinks.values().stream().map(link -> new PPTQFinder(link))
-					.collect(Collectors.toSet()), 8, 5);
+			// For each store link, create a PPTQ event in MainMem
+			WebscrapingUtils.createEventsInMemory();
 
 			Calendar service = CalendarApi.getCalendarService();
-
-			MainMemory.allEvents.values().forEach(event -> {
-				try {
-					service.events()
-							.insert("khva8hs40c91hb4dkj1nok98is@group.calendar.google.com", event.toGoogleEvent())
-							.execute();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			});
-
-		} catch (
-
-		IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// Google calendar upload
-	}
-
-	protected static void runOnExecutor(Collection<Runnable> runnables, int maxThreads, long timeout) {
-		// Over 4 threads hit connection reset from server
-		ExecutorService executor = Executors.newFixedThreadPool(maxThreads);
-		runnables.forEach(runnable -> executor.execute(runnable));
-
-		executor.shutdown();
-		try {
-			executor.awaitTermination(timeout, TimeUnit.MINUTES);
-		} catch (InterruptedException e) {
+			CalendarUtils.deleteAllFutureEvents(service);
+			CalendarUtils.insertAllEventsFromMemory(service);
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

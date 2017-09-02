@@ -12,7 +12,7 @@ import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import app.Messages;
+import io.Messages;
 import model.MTGEvent;
 import util.MainMemory;
 
