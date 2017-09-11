@@ -10,7 +10,7 @@ import util.MainMemory;
 
 public class CalendarUtils {
 
-	private static final String CALENDAR_ID = "khva8hs40c91hb4dkj1nok98is@group.calendar.google.com";
+	private static final String CALENDAR_ID = "1625666ov36rdj4uo3pgjb6qls@group.calendar.google.com";
 
 	public static void deleteAllFutureEvents(Calendar service) {
 		try {
