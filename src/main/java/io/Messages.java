@@ -18,4 +18,12 @@ public class Messages {
 			return '!' + key + '!';
 		}
 	}
+
+	public static int getInt(String key) {
+		try {
+			return Integer.valueOf(RESOURCE_BUNDLE.getString(key));
+		} catch (MissingResourceException | NumberFormatException e) {
+			return 0;
+		}
+	}
 }

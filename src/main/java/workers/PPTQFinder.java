@@ -19,6 +19,7 @@ import util.MainMemory;
 public class PPTQFinder implements Runnable {
 	private static final String PPTQ_TEXT = Messages.getString("HTML.PPTQ");
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
+	private static final long JS_TIMEOUT_MILLIS = Messages.getInt("Timeout.Js");
 	private String url;
 
 	public PPTQFinder(String url) {
@@ -78,7 +79,7 @@ public class PPTQFinder implements Runnable {
 		try (final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_45)) {
 			webClient.setAjaxController(new NicelyResynchronizingAjaxController());
 			page = webClient.getPage(page_url);
-			webClient.waitForBackgroundJavaScript(120000);
+			webClient.waitForBackgroundJavaScript(JS_TIMEOUT_MILLIS);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

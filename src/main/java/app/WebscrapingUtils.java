@@ -11,22 +11,26 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import io.Messages;
 import util.MainMemory;
 import workers.PPTQFinder;
 
 public class WebscrapingUtils {
+	private static final String STORE_LINKS_CLASS = "entry-content";
+	private static final long TIMEOUT = Messages.getInt("Timeout.Executor");
+	private static final int MAX_THREADS = Messages.getInt("Threads.Max");
 
-	static void fetchStoreLinks(String[] args) throws IOException {
+	public static void fetchStoreLinks(String... args) throws IOException {
 		Document doc = Jsoup.connect(args[0]).get();
-		MainMemory.storeLinks.putAll(doc.getElementsByClass("entry-content").get(0).getElementsByTag("p").stream()
+		MainMemory.storeLinks.putAll(doc.getElementsByClass(STORE_LINKS_CLASS).get(0).getElementsByTag("p").stream()
 				.filter(el -> el.text().contains("http:"))
 				.collect(Collectors.toConcurrentMap(Element::hashCode, Element::text)));
 	}
 
-	static void createEventsInMemory() {
+	public static void createEventsInMemory() {
 		runOnExecutor(
 				MainMemory.storeLinks.values().stream().map(link -> new PPTQFinder(link)).collect(Collectors.toSet()),
-				8, 5);
+				MAX_THREADS, TIMEOUT);
 	}
 
 	protected static void runOnExecutor(Collection<Runnable> runnables, int maxThreads, long timeout) {

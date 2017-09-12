@@ -1,77 +1,120 @@
 package app;
 
-import javax.swing.JFrame;
+import java.awt.BorderLayout;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+import com.google.api.services.calendar.Calendar;
+
+import io.FileHandler;
+import io.Messages;
+
 public class Interface extends JFrame {
-	
-	private final JButton pptqButton = new JButton();
-	private final JButton gpButton = new JButton();
-	private final JButton deleteButton = new JButton();
-	private final JButton insertEventsButton = new JButton();
-	
-	
-	
-	
+
+	// Messages
+	private static final String DELETE_ERROR = Messages.getString("Delete.Error");
+	private static final String DELETE_SUCCESS = Messages.getString("Delete.Success");
+	private static final String INSERT_SUCCESS = Messages.getString("Insert.Success");
+	private static final String INSERT_ERROR = Messages.getString("Insert.Error");
+	private static final String INSTRUCTIONS_LINK = Messages.getString("Instructions");
+
+	// Buttons
+	private final JButton deleteButton = new JButton("Delete all future events");
+	private final JButton insertEventsButton = new JButton("Insert all future events");
+	private final JButton documentation = new JButton("How do I use this?");
+
+	// Calendar ID
+	private final JLabel calendarIDLabel = new JLabel("Calendar ID:");
+	private final JTextArea calendarIDTextArea = new JTextArea(
+			FileHandler.reader(Messages.getString("File.Calendar")).get(0));
+	// Store links
+	private final JLabel linkLabel = new JLabel("Link:");
+	private final JTextArea linkTextArea = new JTextArea(FileHandler.reader(Messages.getString("File.Stores")).get(0));
+
 	public Interface() {
 		super();
-		this.setTitle("EventLocator");
-		this.getContentPane().setLayout(null);
-		this.setBounds(1000, 500, 1000, 440);
-		this.add(pptqButton());
-		this.add(deleteButton());
-		this.add(gpButton());
-		this.add(insertEventsButton());
+		// Settings and setup
+		this.setSize(600, 300);
+		this.setTitle("Event Locator to Calendar");
+		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		// Content
+		this.getContentPane().setLayout(new BorderLayout());
+		this.add(deleteButton(), BorderLayout.LINE_END);
+		this.add(insertEventsButton(), BorderLayout.LINE_START);
+		this.add(documentation, BorderLayout.PAGE_END);
+		this.add(boxFunction(), BorderLayout.PAGE_START);
+
+		documentation.addActionListener(e -> {
+			try {
+				Desktop.getDesktop().browse(new URL(INSTRUCTIONS_LINK).toURI());
+			} catch (IOException | URISyntaxException e1) {
+				e1.printStackTrace();
+			}
+		});
+
 		this.setVisible(true);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);		
 	}
-	
-	private JButton pptqButton() {
-		pptqButton.setText("PPTQ Events");
-		pptqButton.setBounds(100, 100, 200, 30);
-		pptqButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(pptqButton, "PPTQ Success");
-			}
-		});
-		return pptqButton;
-	}
-	
-	private JButton gpButton() {
-		gpButton.setText(" GP Events");
-		gpButton.setBounds(40, 40, 100, 30);
-		gpButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(gpButton, "GP Success");
-			}
-		});
-		return gpButton;
-	}
-	
+
 	private JButton deleteButton() {
-		deleteButton.setText("Delete all future events");
-		deleteButton.setBounds(200, 200, 500, 30);
-		deleteButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(deleteButton, "Deleted all the previous events");
+		deleteButton.addActionListener(e -> {
+			CalendarUtils.CALENDAR_ID = calendarIDTextArea.getText();
+			Calendar service;
+			try {
+				service = CalendarApi.getCalendarService();
+				CalendarUtils.deleteAllFutureEvents(service);
+				JOptionPane.showMessageDialog(deleteButton, DELETE_SUCCESS);
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(deleteButton, DELETE_ERROR);
+				e1.printStackTrace();
 			}
 		});
 		return deleteButton;
 	}
-	
-	
+
 	private JButton insertEventsButton() {
-		insertEventsButton.setText("Insert All events of the chosen type");
-		insertEventsButton.setBounds(150, 150, 100, 30);
-		insertEventsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(insertEventsButton, "All events are being inserted. Please Wait.");
-				
+		insertEventsButton.addActionListener(e -> {
+			CalendarUtils.CALENDAR_ID = calendarIDTextArea.getText();
+			Calendar service;
+			try {
+				service = CalendarApi.getCalendarService();
+				WebscrapingUtils.fetchStoreLinks(linkTextArea.getText());
+				WebscrapingUtils.createEventsInMemory();
+				CalendarUtils.insertAllEventsFromMemory(service);
+				JOptionPane.showMessageDialog(insertEventsButton, INSERT_SUCCESS);
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(insertEventsButton, INSERT_ERROR);
+				e1.printStackTrace();
 			}
 		});
 		return insertEventsButton;
 	}
-	
+
+	private JPanel boxFunction() {
+		JPanel calendarIdFlowPanel = new JPanel();
+		calendarIdFlowPanel.add(calendarIDLabel);
+		calendarIdFlowPanel.add(calendarIDTextArea);
+
+		JPanel storeLinkFlowPanel = new JPanel();
+		storeLinkFlowPanel.add(linkLabel);
+		storeLinkFlowPanel.add(linkTextArea);
+
+		JPanel northPanel = new JPanel();
+		northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.PAGE_AXIS));
+		northPanel.add(calendarIdFlowPanel);
+		northPanel.add(storeLinkFlowPanel);
+
+		return northPanel;
+	}
+
 }

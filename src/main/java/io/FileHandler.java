@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -74,7 +75,7 @@ public class FileHandler {
 	 *            The file to read from
 	 * @return ArrayList where each element is one line of the file
 	 */
-	public static Collection<String> reader(String filename) {
+	public static List<String> reader(String filename) {
 		ArrayList<String> lines = new ArrayList<>();
 
 		// Try with resources autocloses the reader when done, regardless of try
