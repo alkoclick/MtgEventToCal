@@ -9,7 +9,7 @@ import com.google.api.services.calendar.model.Events;
 import util.MainMemory;
 
 public class CalendarUtils {
-	private static final String EVENT_INSERT = "Inserting all events...";
+	private static final String EVENT_INSERT = "Inserting event ";
 	private static final String EVENT_DELETE = "Deleting events:";
 	public static String CALENDAR_ID = "";
 
@@ -27,7 +27,7 @@ public class CalendarUtils {
 		});
 	}
 
-	static void insertAllEventsFromMemory(Calendar service) {
+	public static void insertAllEventsFromMemory(Calendar service) {
 		MainMemory.allEvents.values().forEach(event -> {
 			try {
 				System.out.println(EVENT_INSERT);

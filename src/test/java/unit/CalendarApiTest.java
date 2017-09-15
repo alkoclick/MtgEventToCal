@@ -41,7 +41,6 @@ public class CalendarApiTest {
 		try {
 			pptq.setDate(new SimpleDateFormat("yyyy/MM/dd").parse("2017/08/18"));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		service.events().insert("khva8hs40c91hb4dkj1nok98is@group.calendar.google.com", pptq.toGoogleEvent()).execute();

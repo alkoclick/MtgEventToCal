@@ -16,6 +16,8 @@ public class MTGEvent {
 	private List<String> organizer = new ArrayList<>();
 	private String format;
 	private String link;
+	private String type;
+	private String country;
 	private Date date;
 
 	public MTGEvent() {
@@ -23,7 +25,7 @@ public class MTGEvent {
 
 	public Event toGoogleEvent() {
 		Event event = new Event();
-		event.setSummary(name + " - " + format);
+		event.setSummary(type + " " + country + " @ " + organizer.get(0));
 		event.setDescription("Format: " + format);
 		event.setStart(new EventDateTime().setDateTime(new DateTime(date)));
 
@@ -78,5 +80,21 @@ public class MTGEvent {
 
 	public String toString() {
 		return ("Name : " + name + " Date : " + date + " Organizer : " + organizer + " Format : " + format);
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 }

@@ -20,6 +20,7 @@ public class PPTQFinder implements Runnable {
 	private static final String PPTQ_TEXT = Messages.getString("HTML.PPTQ");
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd");
 	private static final long JS_TIMEOUT_MILLIS = Messages.getInt("Timeout.Js");
+	private static final String PPTQ_TYPE = "PPTQ";
 	private String url;
 
 	public PPTQFinder(String url) {
@@ -40,6 +41,7 @@ public class PPTQFinder implements Runnable {
 			// Keep only PPTQs
 			storeTourneys.stream().filter(node -> node.asText().contains(PPTQ_TEXT)).forEach(node -> {
 				MTGEvent event = parseEvent(node);
+				event.setType(PPTQ_TYPE);
 				MainMemory.allEvents.put(event.hashCode(), event);
 			});
 		} catch (Exception e) {
@@ -68,6 +70,8 @@ public class PPTQFinder implements Runnable {
 		event.setOrganizer(
 				node.getChildNodes().get(5).getChildNodes().stream().map(childNode -> childNode.getTextContent())
 						.filter(line -> !line.isEmpty()).collect(Collectors.toList()));
+
+		event.setCountry(event.getOrganizer().get(event.getOrganizer().size() - 1));
 
 		event.setFormat(node.getChildNodes().get(7).getTextContent());
 
