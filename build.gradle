@@ -1,21 +1,39 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'application'
 
 buildscript {
 }
 
-jar {
+mainClassName = "app.Application"
+version =  '0.6.0'
+
+ext {
     baseName = 'MTGEventToCal'
-    version =  '0.3.0'
+    userPath = ''
 }
+
+ext.sharedManifest = manifest {
+    attributes("Implementation-Title": baseName,
+               "Implementation-Version": version,
+               "Main-Class": mainClassName)
+}
+
 
 repositories {
     mavenCentral()
 }
 
+jar {
+    manifest = sharedManifest
+
+    from {
+      configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-version = '1.0'
 
 dependencies {
     compile 'org.jsoup:jsoup:1.10.3'
