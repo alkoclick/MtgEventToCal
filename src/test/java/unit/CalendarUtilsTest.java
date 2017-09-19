@@ -20,7 +20,7 @@ public class CalendarUtilsTest {
 
 	@Before
 	public void init() {
-		CalendarUtils.CALENDAR_ID = "khva8hs40c91hb4dkj1nok98is@group.calendar.google.com";
+		CalendarUtils.CALENDAR_ID = "1625666ov36rdj4uo3pgjb6qls@group.calendar.google.com";
 	}
 
 	@Test
