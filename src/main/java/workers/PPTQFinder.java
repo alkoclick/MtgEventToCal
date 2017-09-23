@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 
+import com.example.mtgeventtocal.MtgEventToCalUI;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -44,6 +45,8 @@ public class PPTQFinder implements Runnable {
 				event.setType(PPTQ_TYPE);
 				MainMemory.allEvents.put(event.hashCode(), event);
 			});
+
+			MtgEventToCalUI.incrementProgress();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

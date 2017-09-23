@@ -1,9 +1,15 @@
+plugins {
+  // Tell Gradle to add Vaadin support
+  id 'com.devsoap.plugin.vaadin' version '1.2.4'
+  
+  // Tell Gradle that we are working in eclipse
+  id 'eclipse-wtp'
+}
+
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'application'
-
-buildscript {
-}
 
 mainClassName = "app.Application"
 version =  '0.6.0'
@@ -18,7 +24,6 @@ ext.sharedManifest = manifest {
                "Implementation-Version": version,
                "Main-Class": mainClassName)
 }
-
 
 repositories {
     mavenCentral()
@@ -42,4 +47,5 @@ dependencies {
     compile 'com.google.api-client:google-api-client:1.22.0'
     compile 'com.google.oauth-client:google-oauth-client-jetty:1.22.0'
     compile 'com.google.apis:google-api-services-calendar:v3-rev254-1.22.0'
+    compile 'com.vaadin:vaadin-push:8.1.4'
 }
