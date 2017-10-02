@@ -30,6 +30,7 @@ public class MtgEventToCalUI extends UI {
 	private static AtomicInteger completedTasks;
 	public static MtgEventToCalUI ACTIVE;
 	private static final int MAX_THREADS = Messages.getInt("Threads.Max");
+	private static final String BOT_EMAIL = "alexbotcentral@gmail.com";
 	private TextArea linksField;
 	private TextField idField;
 	private Button insertEvents;
@@ -39,8 +40,10 @@ public class MtgEventToCalUI extends UI {
 	@Override
 	protected void init(VaadinRequest request) {
 		ACTIVE = this;
-		idField = new TextField("Insert ID here");
-		linksField = new TextArea("Insert stores links here - each store in one line");
+		idField = new TextField(
+				"Insert calendar ID here - make sure to provide 'Make changes to events' permissions to " + BOT_EMAIL);
+		linksField = new TextArea(
+				"Insert stores links here - each store in one line (it's ok if the link is too long and wraps around)");
 		linksField.setWidth(100, Unit.PERCENTAGE);
 		insertEvents = new Button("Insert future events");
 		deleteEvents = new Button("Clear future events");
