@@ -26,11 +26,11 @@ public class MTGEvent {
 	public Event toGoogleEvent() {
 		Event event = new Event();
 		event.setSummary(type + " " + country + " @ " + organizer.get(0));
-		event.setDescription("Format: " + format);
-		event.setStart(new EventDateTime().setDateTime(new DateTime(date)));
-
+		event.setDescription("Format: " + format + "\n\n" + link);
 		event.setLocation(organizer.stream().collect(Collectors.joining(",")));
+
 		// End time
+		event.setStart(new EventDateTime().setDateTime(new DateTime(date)));
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		calendar.add(Calendar.HOUR_OF_DAY, 8);
@@ -78,6 +78,7 @@ public class MTGEvent {
 		this.date = date;
 	}
 
+	@Override
 	public String toString() {
 		return ("Name : " + name + " Date : " + date + " Organizer : " + organizer + " Format : " + format);
 	}

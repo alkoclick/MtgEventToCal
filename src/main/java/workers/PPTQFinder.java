@@ -75,7 +75,7 @@ public class PPTQFinder implements Runnable {
 						.filter(line -> !line.isEmpty()).collect(Collectors.toList()));
 
 		event.setCountry(event.getOrganizer().get(event.getOrganizer().size() - 1));
-
+		event.setLink(url);
 		event.setFormat(node.getChildNodes().get(7).getTextContent());
 
 		return event;
