@@ -64,6 +64,7 @@ public class MtgEventToCalUI extends UI {
 
 		insertEvents.addClickListener(e -> {
 			MainMemory.allEvents.clear();
+			completedTasks.set(0);
 			bar.setIndeterminate(false);
 			CalendarUtils.CALENDAR_ID = idField.getValue();
 			// https://stackoverflow.com/questions/454908/split-java-string-by-new-line
