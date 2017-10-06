@@ -29,10 +29,10 @@ public class MTGEvent {
 		event.setDescription("Format: " + format + "\n\n" + link);
 		event.setLocation(organizer.stream().collect(Collectors.joining(",")));
 
-		// End time
-		event.setStart(new EventDateTime().setDateTime(new DateTime(date)));
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
+		calendar.set(Calendar.HOUR_OF_DAY, 11);
+		event.setStart(new EventDateTime().setDateTime(new DateTime(calendar.getTime())));
 		calendar.add(Calendar.HOUR_OF_DAY, 8);
 		event.setEnd(new EventDateTime().setDateTime(new DateTime(calendar.getTime())));
 		return event;

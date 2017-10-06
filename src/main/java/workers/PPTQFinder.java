@@ -32,7 +32,6 @@ public class PPTQFinder implements Runnable {
 	public void run() {
 		// Visit each one
 		// Wait for page to load
-		System.out.println(url);
 		HtmlPage storeHomepage = waitForPageToLoad(url);
 
 		try {
