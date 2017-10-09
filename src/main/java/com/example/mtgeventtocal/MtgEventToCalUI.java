@@ -36,6 +36,7 @@ public class MtgEventToCalUI extends UI {
 	private Button insertEvents;
 	private Button deleteEvents;
 	private Calendar service = null;
+	private VerticalLayout vert;
 
 	@Override
 	protected void init(VaadinRequest request) {
@@ -57,15 +58,14 @@ public class MtgEventToCalUI extends UI {
 			e1.printStackTrace();
 		}
 
-		VerticalLayout vert = new VerticalLayout(idField, linksField, insertEvents, deleteEvents);
+		vert = new VerticalLayout(idField, linksField, insertEvents, deleteEvents);
 
 		vert.setWidth(100, Unit.PERCENTAGE);
 		setContent(vert);
 
 		insertEvents.addClickListener(e -> {
-			MainMemory.allEvents.clear();
-			completedTasks.set(0);
-			bar.setIndeterminate(false);
+			reset();
+
 			CalendarUtils.CALENDAR_ID = idField.getValue();
 			// https://stackoverflow.com/questions/454908/split-java-string-by-new-line
 			MainMemory.storeLinks
@@ -93,6 +93,13 @@ public class MtgEventToCalUI extends UI {
 			CalendarUtils.deleteAllFutureEvents(service);
 			setContent(vert);
 		});
+	}
+
+	private void reset() {
+		MainMemory.allEvents.clear();
+		MainMemory.storeLinks.clear();
+		completedTasks.set(0);
+		bar.setIndeterminate(false);
 	}
 
 	/**
